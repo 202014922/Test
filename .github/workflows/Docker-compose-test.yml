@@ -18,16 +18,11 @@ jobs:
       # MySQL 서비스 정의
       mysql:
         image: mysql:8.0
-        container_name: mysql-db
         ports:
           - 3306:3306
-        networks:
-          - app-network
         environment:
           MYSQL_ROOT_PASSWORD: 1234
           MYSQL_DATABASE: travel_db
-        volumes:
-          - mysql-data:/var/lib/mysql
         healthcheck:
           test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
           interval: 10s
@@ -39,7 +34,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Set up Docker
+      # 2. Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
