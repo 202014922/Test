@@ -42,7 +42,7 @@ jobs:
       # 프론트엔드 서비스로 이동 후 의존성 설치
       - name: Install dependencies for frontend
         run: |
-          docker-compose exec frontend npm install
+          docker-compose exec -T frontend npm install
           
       # 테스트 실행
       - name: Run tests
