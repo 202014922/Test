@@ -3,12 +3,12 @@ name: docker CI
 on:
   push:
     branches:
-      - main
-      - master
+    - main
+    - master
   pull_request:
     branches:
-      - main
-      - master
+    - main
+    - master
 
 jobs:
   build:
@@ -35,37 +35,37 @@ jobs:
       SPRING_DATASOURCE_PASSWORD: 1234
 
     steps:
-    - name: Checkout repository
+    - name: 저장소 체크아웃
       uses: actions/checkout@v3
 
-    - name: Set up JDK 17
+    - name: JDK 17 설정
       uses: actions/setup-java@v3
       with:
         java-version: '17'
-        distribution: 'eclipse-temurin'
+        distribution: 'temurin'  # 'eclipse-temurin' 대신 'temurin' 사용
 
-    - name: Build Backend
+    - name: 백엔드 빌드
       run: |
         cd backend
         chmod +x gradlew
         ./gradlew clean build -x test
 
-    - name: Set up Node.js
+    - name: Node.js 설정
       uses: actions/setup-node@v3
       with:
         node-version: '18'
 
-    - name: Install Frontend Dependencies
+    - name: 프론트엔드 의존성 설치
       run: |
         cd frontend
         npm install
 
-    - name: Build Frontend
+    - name: 프론트엔드 빌드
       run: |
         cd frontend
         npm run build
 
-    - name: Run Backend Tests
+    - name: 백엔드 테스트 실행
       run: |
         cd backend
         ./gradlew test
@@ -74,7 +74,7 @@ jobs:
         SPRING_DATASOURCE_USERNAME: ${{ env.SPRING_DATASOURCE_USERNAME }}
         SPRING_DATASOURCE_PASSWORD: ${{ env.SPRING_DATASOURCE_PASSWORD }}
 
-    - name: Run Frontend Tests
+    - name: 프론트엔드 테스트 실행
       run: |
         cd frontend
         npm test -- --watchAll=false
