@@ -39,6 +39,10 @@ jobs:
       - name: Build and run Docker Compose
         run: docker-compose -f docker-compose.yml up -d --build
 
+      # 서비스 상태 확인
+      - name: Check Docker Compose services status
+        run: docker-compose -f docker-compose.yml ps
+
       # 서비스가 준비될 때까지 대기
       - name: Wait for services to be healthy
         run: |
@@ -51,6 +55,10 @@ jobs:
               sleep 5
             fi
           done
+
+      # 프론트엔드 서비스 로그 확인
+      - name: Check frontend service logs
+        run: docker-compose logs frontend
 
       # 프론트엔드 서비스로 이동 후 의존성 설치
       - name: Install dependencies for frontend
