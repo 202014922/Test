@@ -47,7 +47,7 @@ jobs:
       # 테스트 실행
       - name: Run tests
         run: |
-          docker-compose exec frontend npm test -- --watchAll=false
+          docker-compose exec -T frontend npm test -- --watchAll=false
 
       # 테스트 종료 후 종료
       - name: Shutdown containers
