@@ -15,19 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      # MySQL 서비스 정의
       mysql:
         image: mysql:8.0
         ports:
           - 3306:3306
-        environment:
-          MYSQL_ROOT_PASSWORD: 1234
-          MYSQL_DATABASE: travel_db
-        healthcheck:
-          test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-          interval: 10s
-          timeout: 5s
-          retries: 3
 
     steps:
       # 1. Checkout the code
@@ -88,6 +79,3 @@ jobs:
         run: |
           docker-compose -f docker-compose.yml build
           docker-compose push
-
-volumes:
-  mysql-data:
