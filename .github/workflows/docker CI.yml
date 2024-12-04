@@ -1,0 +1,59 @@
+name: Docker Compose CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  docker-compose:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: 1234
+          MYSQL_DATABASE: travel_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Docker Compose
+      - name: Set up Docker Compose
+        run: |
+          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+
+      # Build and start services using Docker Compose
+      - name: Build and start services
+        run: docker-compose -f docker-compose.yml up -d --build
+
+      # Install dependencies for frontend
+      - name: Install dependencies for frontend
+        run: |
+          docker-compose exec -T frontend npm install
+
+      # Run frontend tests
+      - name: Run frontend tests
+        run: |
+          docker-compose exec -T frontend npm test -- --watchAll=false
+
+      # Run backend tests
+      - name: Run backend tests
+        run: |
+          docker-compose exec -T backend ./mvnw test
+
+      # Shut down the services after the tests
+      - name: Shutdown services
+        run: docker-compose down
