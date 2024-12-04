@@ -21,18 +21,13 @@ jobs:
           MYSQL_ROOT_PASSWORD: 1234
           MYSQL_DATABASE: travel_db
         ports:
-          - 3306:3306
+          - 3307:3306  # 호스트의 3307 포트를 MySQL의 3306 포트에 바인딩
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       # 체크아웃
       - name: Checkout code
         uses: actions/checkout@v2
-
-      # 기존 컨테이너 종료 및 삭제
-      - name: Stop and remove existing containers (if any)
-        run: |
-          docker-compose -f docker-compose.yml down || true  # 기존 컨테이너가 있다면 종료 및 삭제
 
       # Docker Compose 설치
       - name: Set up Docker Compose
