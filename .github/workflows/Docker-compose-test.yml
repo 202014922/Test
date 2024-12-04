@@ -38,22 +38,29 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docker-
 
-      # 4. Build and start Docker Compose environment
+      # 4. Install Docker Compose
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.19.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version  # Verify installation
+
+      # 5. Build and start Docker Compose environment
       - name: Build and start Docker Compose environment
         run: |
           docker-compose -f docker-compose.yml up -d --build
 
-      # 5. Wait for MySQL service to be ready
+      # 6. Wait for MySQL service to be ready
       - name: Wait for MySQL to be ready
         run: |
           docker-compose exec mysql mysqladmin --host=mysql --user=root --password=1234 ping --wait=30
 
-      # 6. Run tests in frontend container
+      # 7. Run tests in frontend container
       - name: Run tests in frontend container
         run: |
           docker-compose exec frontend npm test -- --watchAll=false
 
-      # 7. Run tests in backend container
+      # 8. Run tests in backend container
       - name: Run tests in backend container
         run: |
           docker-compose exec backend ./gradlew test
