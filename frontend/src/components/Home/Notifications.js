@@ -71,7 +71,7 @@ function Notifications() {
             >
                 <Header />
 
-                <Box sx={{ mt: 8, p: 4, boxShadow: 3, borderRadius: 2 }}>
+                <Box sx={{ mt: 8, p: 4, boxShadow: 3, borderRadius: 2, backgroundColor: '#ffffff' }}>
                     <Typography variant="h4" component="h1" align="center" gutterBottom>
                         알림
                     </Typography>

@@ -149,7 +149,6 @@ function ProfileSettings() {
                     {error && <Alert severity="error">{error}</Alert>}
                     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
                         <Grid container spacing={2}>
-                            {/* 여행 성향 선택 */}
                             <Grid item xs={12}>
                                 <FormControl fullWidth>
                                     <InputLabel>여행 성향</InputLabel>
@@ -166,7 +165,6 @@ function ProfileSettings() {
                                 </FormControl>
                             </Grid>
 
-                            {/* 선호하는 여행지 선택 */}
                             <Grid item xs={12}>
                                 <FormControl fullWidth>
                                     <InputLabel>선호하는 여행지</InputLabel>
@@ -183,7 +181,6 @@ function ProfileSettings() {
                                 </FormControl>
                             </Grid>
 
-                            {/* 취미 선택 */}
                             <Grid item xs={12}>
                                 <FormControl fullWidth>
                                     <InputLabel>취미</InputLabel>
@@ -209,7 +206,6 @@ function ProfileSettings() {
                                 </FormControl>
                             </Grid>
 
-                            {/* 관심사 선택 */}
                             <Grid item xs={12}>
                                 <FormControl fullWidth>
                                     <InputLabel>관심사</InputLabel>
@@ -236,7 +232,6 @@ function ProfileSettings() {
                                 </FormControl>
                             </Grid>
 
-                            {/* 예산 선택 */}
                             <Grid item xs={12}>
                                 <FormControl fullWidth>
                                     <InputLabel>예산</InputLabel>
@@ -253,7 +248,6 @@ function ProfileSettings() {
                                 </FormControl>
                             </Grid>
 
-                            {/* 자기소개 입력 */}
                             <Grid item xs={12}>
                                 <TextField
                                     label="자기소개"
@@ -272,7 +266,6 @@ function ProfileSettings() {
                                 />
                             </Grid>
 
-                            {/* 프로필 사진 업로드 */}
                             <Grid item xs={12}>
                                 <Typography variant="subtitle1">프로필 사진</Typography>
                                 {profilePicture && (
@@ -287,7 +280,6 @@ function ProfileSettings() {
                                 {selectedFile && <Typography variant="body2" sx={{ mt: 1 }}>{selectedFile.name}</Typography>}
                             </Grid>
 
-                            {/* 여행 가능 날짜 선택 */}
                             <Grid item xs={12}>
                                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                                     <DatePicker
@@ -299,7 +291,6 @@ function ProfileSettings() {
                                 </LocalizationProvider>
                             </Grid>
 
-                            {/* 선택된 날짜 표시 */}
                             <Grid item xs={12}>
                                 <Typography variant="subtitle1">선택된 날짜</Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>

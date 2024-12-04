@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Container, Typography, Box, Button, Grid, Card, CardContent, Avatar, CircularProgress, Alert } from '@mui/material';
 import { motion } from 'framer-motion';
 import AuthService from '../../services/AuthService';
 import ApiService from '../../services/ApiService';
-import Header from '../../components/Header';  // Header 컴포넌트 임포트
+import Header from '../../components/Header';
 
 function Home() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const boxRef = useRef(null); // Box 컴포넌트의 참조
+    const [boxWidth, setBoxWidth] = useState(0); // Box의 너비 상태
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -35,7 +37,6 @@ function Home() {
 
         fetchUserProfile();
 
-        // 뒤로 가기 막기
         const preventBack = () => {
             window.history.pushState(null, '', window.location.href);
             window.onpopstate = () => {
@@ -46,7 +47,6 @@ function Home() {
         preventBack();
 
         return () => {
-            // 컴포넌트 언마운트 시 뒤로 가기 기능 복원
             window.onpopstate = null;
         };
     }, [navigate]);
@@ -55,6 +55,13 @@ function Home() {
         AuthService.logout();
         navigate('/login');
     };
+
+    // Box의 너비를 계산하여 상태에 저장
+    useEffect(() => {
+        if (boxRef.current) {
+            setBoxWidth(boxRef.current.offsetWidth); // Box의 너비를 상태에 저장
+        }
+    }, [user]); // user가 변경될 때마다 Box 크기를 계산하도록 변경
 
     if (loading) {
         return (
@@ -73,116 +80,118 @@ function Home() {
     }
 
     return (
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" sx={{ pt: 4 }}>
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
             >
-                {/* Header 컴포넌트 추가 */}
                 <Header />
 
-                {/* 프로필 사진 및 사용자 이름 */}
+                <Box ref={boxRef} sx={{ mt: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {user && user.profilePicture ? (
+                        <Avatar
+                            alt={user.username}
+                            src={`http://localhost:8080${user.profilePicture}`}
+                            sx={{ width: 120, height: 120, mr: 3, border: '3px solid #fff' }}
+                        />
+                    ) : (
+                        <Avatar sx={{ width: 120, height: 120, mr: 3, backgroundColor: '#1976d2' }}>
+                            {user && user.username ? user.username.charAt(0).toUpperCase() : 'U'}
+                        </Avatar>
+                    )}
+                    <Typography variant="h4" sx={{ fontWeight: 600 }}>
+                        안녕하세요, {user && user.username ? user.username : 'User'}님!
+                    </Typography>
+                </Box>
+
                 <Box sx={{ mt: 4 }}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} md={6}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-                                {user && user.profilePicture ? (
-                                    <Avatar
-                                        alt={user.username}
-                                        src={`http://localhost:8080${user.profilePicture}`}
-                                        sx={{ width: 80, height: 80, mr: 2 }}
-                                    />
-                                ) : (
-                                    <Avatar sx={{ width: 80, height: 80, mr: 2 }}>
-                                        {user && user.username ? user.username.charAt(0).toUpperCase() : 'U'}
-                                    </Avatar>
-                                )}
-                                <Typography variant="h4">
-                                    안녕하세요, {user && user.username ? user.username : 'User'}님!
-                                </Typography>
-                            </Box>
-
-                            {/* 카드들 */}
-                            <Box sx={{ mt: 4 }}>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} sm={6}>
-                                        <Card>
-                                            <CardContent>
-                                                <Typography variant="h6" gutterBottom>
-                                                    <Link to="/profile-settings">프로필 설정</Link>
-                                                </Typography>
-                                                <Typography variant="body2">
-                                                    여행 성향 및 선호도를 설정하세요.
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <Card>
-                                            <CardContent>
-                                                <Typography variant="h6" gutterBottom>
-                                                    <Link to="/match">매칭</Link>
-                                                </Typography>
-                                                <Typography variant="body2">
-                                                    여행 동반자를 찾아보세요.
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <Card>
-                                            <CardContent>
-                                                <Typography variant="h6" gutterBottom>
-                                                    <Link to="/chats">채팅</Link>
-                                                </Typography>
-                                                <Typography variant="body2">
-                                                    친구들과 채팅을 나눠보세요.
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={12} sm={6}>
-                                        <Card>
-                                            <CardContent>
-                                                <Typography variant="h6" gutterBottom>
-                                                    <Link to="/notifications">알림</Link>
-                                                </Typography>
-                                                <Typography variant="body2">
-                                                    새로운 알림을 확인하세요.
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                </Grid>
-                            </Box>
-
-                            {/* 로그아웃 버튼 */}
-                            <Box sx={{ mt: 4 }}>
-                                <Button variant="contained" color="secondary" onClick={handleLogout}>
-                                    로그아웃
-                                </Button>
-                            </Box>
+                    <Grid container spacing={3} justifyContent="center">
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+                                <CardContent>
+                                    <Typography variant="h6" gutterBottom>
+                                        <Link to="/profile-settings" style={{ textDecoration: 'none', color: '#1976d2' }}>
+                                            프로필 설정
+                                        </Link>
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        여행 성향 및 선호도를 설정하세요.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
                         </Grid>
-
-                        {/* 이미지 섹션 */}
-                        <Grid item xs={12} md={6}>
-                            <Box
-                                sx={{
-                                    backgroundImage: 'url(https://source.unsplash.com/featured/?travel)',
-                                    height: '400px',
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center',
-                                    borderRadius: 2,
-                                }}
-                                component={motion.div}
-                                initial={{ scale: 0.9 }}
-                                animate={{ scale: 1 }}
-                                transition={{ duration: 1 }}
-                            >
-                            </Box>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+                                <CardContent>
+                                    <Typography variant="h6" gutterBottom>
+                                        <Link to="/match" style={{ textDecoration: 'none', color: '#1976d2' }}>
+                                            매칭
+                                        </Link>
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        여행 동반자를 찾아보세요.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+                                <CardContent>
+                                    <Typography variant="h6" gutterBottom>
+                                        <Link to="/chats" style={{ textDecoration: 'none', color: '#1976d2' }}>
+                                            채팅
+                                        </Link>
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        친구들과 채팅을 나눠보세요.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={3}>
+                            <Card sx={{ boxShadow: 3, borderRadius: 2 }}>
+                                <CardContent>
+                                    <Typography variant="h6" gutterBottom>
+                                        <Link to="/notifications" style={{ textDecoration: 'none', color: '#1976d2' }}>
+                                            알림
+                                        </Link>
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        새로운 알림을 확인하세요.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
                         </Grid>
                     </Grid>
+                </Box>
+
+                <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleLogout}
+                        sx={{
+                            padding: '10px 20px',
+                            fontSize: '16px',
+                            borderRadius: '20px',
+                            boxShadow: 3,
+                        }}
+                    >
+                        로그아웃
+                    </Button>
+                </Box>
+
+                <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+                    <img
+                        src={require('../../assets/images/logo.png')}
+                        alt="Logo"
+                        style={{
+                            width: boxWidth * 0.5, // Box의 너비에 맞추기
+                            height: 'auto',  // 비율 유지
+                            objectFit: 'contain', // 비율을 유지하면서 맞추기
+                        }}
+                    />
                 </Box>
             </motion.div>
         </Container>

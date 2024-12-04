@@ -86,7 +86,6 @@ function UserProfile() {
                 
                 <Box sx={{ mt: 4, p: 4, boxShadow: 3, borderRadius: 2 }}>
                     <Grid container spacing={2}>
-                        {/* 프로필 사진 */}
                         <Grid item xs={12} sm={4}>
                             <Avatar
                                 src={profile.profilePicture ? `http://localhost:8080${profile.profilePicture}` : ''}
@@ -95,7 +94,6 @@ function UserProfile() {
                             />
                         </Grid>
 
-                        {/* 기본 정보 및 자기소개 */}
                         <Grid item xs={12} sm={8}>
                             <Typography variant="h5" gutterBottom>
                                 {profile.username}
@@ -114,7 +112,6 @@ function UserProfile() {
                                 <strong>예산:</strong> {profile.budget || '설정되지 않음'}
                             </Typography>
 
-                            {/* 취미 목록 */}
                             <Typography variant="body1" gutterBottom>
                                 <strong>취미:</strong>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
@@ -128,7 +125,6 @@ function UserProfile() {
                                 </Box>
                             </Typography>
 
-                            {/* 관심사 목록 */}
                             <Typography variant="body1" gutterBottom>
                                 <strong>관심사:</strong>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1 }}>
@@ -142,7 +138,6 @@ function UserProfile() {
                                 </Box>
                             </Typography>
 
-                            {/* 여행 가능 날짜 */}
                             <Typography variant="body1" gutterBottom>
                                 <strong>여행 가능 날짜:</strong>
                                 {profile.availableTravelDates && profile.availableTravelDates.length > 0 ? (

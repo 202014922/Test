@@ -44,7 +44,7 @@ function Match() {
                 status: '대기'
             };
             const response = await ApiService.createMatch(newMatch);
-            if(response.data) {
+            if (response.data) {
                 setMessage('매칭 요청이 성공적으로 전송되었습니다.');
                 setError('');
             }
@@ -68,7 +68,15 @@ function Match() {
             >
                 <Header />
 
-                <Box sx={{ mt: 8, p: 4, boxShadow: 3, borderRadius: 2 }}>
+                <Box
+                    sx={{
+                        mt: 8,
+                        p: 4,
+                        boxShadow: 3,
+                        borderRadius: 2,
+                        backgroundColor: '#ffffff', // 배경색을 흰색으로 설정
+                    }}
+                >
                     <Typography variant="h4" component="h1" align="center" gutterBottom>
                         매칭 목록
                     </Typography>
@@ -84,7 +92,10 @@ function Match() {
                                 <ListItem key={match.matchId} sx={{ mb: 1, border: '1px solid #ddd', borderRadius: 1 }}>
                                     <ListItemAvatar>
                                         {match.user.profilePicture ? (
-                                            <Avatar src={`http://localhost:8080${match.user.profilePicture}`} alt={`${match.user.username} 프로필`} />
+                                            <Avatar
+                                                src={`http://localhost:8080${match.user.profilePicture}`}
+                                                alt={`${match.user.username} 프로필`}
+                                            />
                                         ) : (
                                             <Avatar>{match.user.username.charAt(0).toUpperCase()}</Avatar>
                                         )}
@@ -94,10 +105,19 @@ function Match() {
                                         secondary={`유사성: ${match.similarityScore.toFixed(2)}%`}
                                     />
                                     <Box>
-                                        <Button variant="contained" color="primary" onClick={() => handleSelect(match.user)} sx={{ mr: 1 }}>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => handleSelect(match.user)}
+                                            sx={{ mr: 1 }}
+                                        >
                                             매칭 요청
                                         </Button>
-                                        <Button variant="outlined" color="secondary" onClick={() => handleViewProfile(match.user.id)}>
+                                        <Button
+                                            variant="outlined"
+                                            color="secondary"
+                                            onClick={() => handleViewProfile(match.user.id)}
+                                        >
                                             프로필 보기
                                         </Button>
                                     </Box>

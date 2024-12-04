@@ -13,7 +13,7 @@ import {
     Avatar,
     ListItemAvatar,
     CircularProgress,
-    IconButton
+    IconButton,
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import AuthService from '../../services/AuthService';
@@ -44,7 +44,6 @@ function ChatList() {
                 const chatIds = response.data;
                 setChats(chatIds);
 
-                // 상대방 사용자 정보를 가져옵니다.
                 const userIds = chatIds.map(chatId => {
                     const parts = chatId.split('_');
                     const smallerId = parseInt(parts[1]);
@@ -72,33 +71,27 @@ function ChatList() {
         fetchChats();
     }, [user.id]);
 
-    // 채팅방 삭제 확인 다이얼로그 열기
     const openDeleteDialog = (chatId) => {
         setSelectedChatId(chatId);
         setDeleteDialogOpen(true);
     };
 
-    // 채팅방 삭제 확인 다이얼로그 닫기
     const closeDeleteDialog = () => {
         setSelectedChatId(null);
         setDeleteDialogOpen(false);
     };
 
-    // 채팅방 삭제 핸들러
     const handleDeleteChat = async (chatId) => {
         try {
             await ApiService.deleteChat(chatId);
-            // 삭제된 채팅방을 목록에서 제거
             setChats(prevChats => prevChats.filter(id => id !== chatId));
             setSuccessMessage('채팅방이 성공적으로 삭제되었습니다.');
-            // 성공 메시지를 일정 시간 후에 사라지게 설정
             setTimeout(() => {
                 setSuccessMessage('');
             }, 3000);
         } catch (err) {
             console.error('채팅방 삭제에 실패했습니다.', err);
             setDeleteError('채팅방 삭제에 실패했습니다.');
-            // 에러 메시지를 일정 시간 후에 사라지게 설정
             setTimeout(() => {
                 setDeleteError('');
             }, 3000);
@@ -129,14 +122,20 @@ function ChatList() {
                 transition={{ duration: 0.5 }}
             >
                 <Header />
-                
-                <Box sx={{ mt: 4 }}>
+
+                <Box
+                    sx={{
+                        mt: 4,
+                        p: 4,
+                        borderRadius: 2,
+                        boxShadow: 3,
+                        backgroundColor: '#ffffff', // 배경색 흰색 설정
+                    }}
+                >
                     <Typography variant="h4" gutterBottom>
                         채팅 목록
                     </Typography>
-                    {/* 성공 메시지 표시 */}
                     {successMessage && <Alert severity="success" sx={{ mb: 2 }}>{successMessage}</Alert>}
-                    {/* 삭제 에러 메시지 표시 */}
                     {deleteError && <Alert severity="error" sx={{ mb: 2 }}>{deleteError}</Alert>}
                     {loading ? (
                         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -149,7 +148,6 @@ function ChatList() {
                     ) : (
                         <List>
                             {chats.map((chatId, index) => {
-                                // 상대방 사용자 ID 추출
                                 const parts = chatId.split('_');
                                 const smallerId = parseInt(parts[1]);
                                 const largerId = parseInt(parts[2]);
@@ -159,6 +157,17 @@ function ChatList() {
                                 return (
                                     <ListItem
                                         key={index}
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            width: '100%',
+                                            mb: 2,
+                                            padding: '12px',
+                                            boxSizing: 'border-box',
+                                            border: '1px solid #ddd',
+                                            borderRadius: '8px',
+                                        }}
                                         secondaryAction={
                                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                                 <Button
@@ -215,7 +224,6 @@ function ChatList() {
                 </Box>
             </motion.div>
 
-            {/* 채팅방 삭제 확인 다이얼로그 */}
             {selectedChatId && (
                 <ConfirmDialog
                     open={deleteDialogOpen}

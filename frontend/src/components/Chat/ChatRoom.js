@@ -1,4 +1,3 @@
-// src/components/Chat/ChatRoom.js
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom'; // useNavigate 추가
 import ApiService from '../../services/ApiService';
@@ -220,6 +219,9 @@ function ChatRoom() {
                     <Box sx={{ mt: 2 }}>
                         <Button component={Link} to={`/planner/${chatId}`} variant="outlined" color="secondary">
                             플래너 작성
+                        </Button>
+                        <Button component={Link} to="/chats" variant="outlined" color="secondary" sx={{ ml: 2 }}>
+                            채팅 목록
                         </Button>
                     </Box>
                 </Box>
