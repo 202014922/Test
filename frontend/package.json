@@ -9,11 +9,11 @@
     "react-scripts": "4.0.3"
   },
   "devDependencies": {
-    "babel-jest": "^27.0.6",
+    "babel-jest": "^26.6.0",
     "@babel/core": "^7.14.5",
     "@babel/preset-env": "^7.14.5",
     "@babel/preset-react": "^7.14.5",
-    "jest": "^27.0.6"
+    "jest": "^26.6.0"
   },
   "jest": {
     "transform": {
