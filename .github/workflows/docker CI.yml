@@ -1,17 +1,14 @@
-name: Docker Compose CI
+name: CI
 
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
-      - master
+    branches: [ main ]
 
 jobs:
-  docker-compose:
+  build:
+
     runs-on: ubuntu-latest
 
     services:
@@ -22,38 +19,58 @@ jobs:
           MYSQL_DATABASE: travel_db
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    env:
+      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/travel_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
 
     steps:
-      # Checkout the code from the repository
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      # Set up Docker Compose
-      - name: Set up Docker Compose
-        run: |
-          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          chmod +x /usr/local/bin/docker-compose
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'eclipse-temurin'
 
-      # Build and start services using Docker Compose
-      - name: Build and start services
-        run: docker-compose -f docker-compose.yml up -d --build
+    - name: Build Backend
+      run: |
+        cd backend
+        chmod +x gradlew
+        ./gradlew clean build -x test
 
-      # Install dependencies for frontend
-      - name: Install dependencies for frontend
-        run: |
-          docker-compose exec -T frontend npm install
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
 
-      # Run frontend tests
-      - name: Run frontend tests
-        run: |
-          docker-compose exec -T frontend npm test -- --watchAll=false
+    - name: Install Frontend Dependencies
+      run: |
+        cd frontend
+        npm install
 
-      # Run backend tests
-      - name: Run backend tests
-        run: |
-          docker-compose exec -T backend ./mvnw test
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm run build
 
-      # Shut down the services after the tests
-      - name: Shutdown services
-        run: docker-compose down
+    - name: Run Backend Tests
+      run: |
+        cd backend
+        ./gradlew test
+      env:
+        SPRING_DATASOURCE_URL: ${{ env.SPRING_DATASOURCE_URL }}
+        SPRING_DATASOURCE_USERNAME: ${{ env.SPRING_DATASOURCE_USERNAME }}
+        SPRING_DATASOURCE_PASSWORD: ${{ env.SPRING_DATASOURCE_PASSWORD }}
+
+    - name: Run Frontend Tests
+      run: |
+        cd frontend
+        npm test -- --watchAll=false
